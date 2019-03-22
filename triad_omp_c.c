@@ -25,12 +25,27 @@ void list_devices(void);
 // utils
 void sys_fatal(const char *msg);
 
-#define T double
-#include "triad_omp_c.in"
-#undef T
-#define T float
-#include "triad_omp_c.in"
-#undef T
+#define CONCAT(a,b,c) a##b##c
+#define template(a,b) CONCAT(a,_,b)
+
+#ifdef DEVICE_MEMORY
+	#define T double
+	#include "triad_omp_mem_c.in"
+	#undef T
+	#define T float
+	#include "triad_omp_mem_c.in"
+	#undef T
+#else
+	#define T double
+	#include "triad_omp_c.in"
+	#undef T
+	#define T float
+	#include "triad_omp_c.in"
+	#undef T
+#endif
+
+#undef template
+#undef CONCAT
 
 void
 list_devices()

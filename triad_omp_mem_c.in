@@ -38,12 +38,32 @@ void
 template(triad,T)(size_t s, template(Array,T) a, template(Array,T) b, template(Array,T) c)
 {
 	const T sc = start_scalar;
-	T *aa = a.p[1];
-	T *bb = b.p[1];
-	T *cc = c.p[1];
+	T * restrict aa = a.p[1];
+	const T * restrict bb = b.p[1];
+	const T * restrict cc = c.p[1];
+#ifdef MANUAL_SCHEDULE
+	#pragma omp target is_device_ptr(aa,bb,cc)
+	#pragma omp teams
+	{
+		const int nteam = omp_get_num_teams();
+		const int m = omp_get_team_num();
+		#pragma omp parallel
+		{
+			const int nthr = omp_get_num_threads();
+			const int t = omp_get_thread_num();
+			const size_t step = (size_t)nteam * nthr;
+			size_t i = (size_t)m * nthr + t;
+			while(i < s){
+				aa[i] = bb[i] + sc * cc[i];
+				i += step;
+			}
+		}
+	}
+#else
 	#pragma omp target teams distribute parallel for simd is_device_ptr(aa,bb,cc)
 	for(size_t i = 0; i < s; i++)
 		aa[i] = bb[i] + sc * cc[i];
+#endif
 }
 
 void
@@ -83,7 +103,7 @@ template(run_triad,T)(size_t nt, size_t s)
 
 	printf("Repeat: %zu\n", nt);
 	printf("Length: %zu\n", s);
-	printf("Bytes: %zu\n", sizeof(T));
+	printf("Element: %zu B\n", sizeof(T));
 	printf("Size: %.0f KB\n", size*1E-3);
 	printf("Footprint: %.0f KB\n", 3*size*1E-3);
 

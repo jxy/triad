@@ -28,6 +28,9 @@ void sys_fatal(const char *msg);
 #define CONCAT(a,b,c) a##b##c
 #define template(a,b) CONCAT(a,_,b)
 
+#ifdef MANUAL_SCHEDULE
+#define DEVICE_MEMORY
+#endif
 #ifdef DEVICE_MEMORY
 	#define T double
 	#include "triad_omp_mem_c.in"

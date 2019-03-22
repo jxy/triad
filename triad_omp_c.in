@@ -29,7 +29,7 @@ template(to_cpu,T)(size_t s, T *a)
 }
 
 void
-template(triad,T)(size_t s, T *a, T *b, T *c)
+template(triad,T)(size_t s, T * restrict a, T * restrict b, T * restrict c)
 {
 	const T sc = start_scalar;
 	#pragma omp target teams distribute parallel for simd
@@ -74,7 +74,7 @@ template(run_triad,T)(size_t nt, size_t s)
 
 	printf("Repeat: %zu\n", nt);
 	printf("Length: %zu\n", s);
-	printf("Bytes: %zu\n", sizeof(T));
+	printf("Element: %zu B\n", sizeof(T));
 	printf("Size: %.0f KB\n", size*1E-3);
 	printf("Footprint: %.0f KB\n", 3*size*1E-3);
 

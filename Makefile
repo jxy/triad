@@ -19,12 +19,15 @@ triad_omp_sched_c: triad_omp_c.c
 
 triad_omp_c.clang: triad_omp_c.in
 triad_omp_c.clang: triad_omp_c.c
+	module load clang/coral-2018.08.08 && \
 	$(CLANG) $(FLAGS)  -o $@ $<
 
 triad_omp_mem_c.clang: triad_omp_mem_c.in
 triad_omp_mem_c.clang: triad_omp_c.c
+	module load clang/coral-2018.08.08 && \
 	$(CLANG) $(FLAGS) -DDEVICE_MEMORY -o $@ $<
 
 triad_omp_sched_c.clang: triad_omp_mem_c.in
 triad_omp_sched_c.clang: triad_omp_c.c
+	module load clang/coral-2018.08.08 && \
 	$(CLANG) $(FLAGS) -DMANUAL_SCHEDULE -o $@ $<

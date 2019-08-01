@@ -1,65 +1,14 @@
 #include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <float.h>
-#include <math.h>
-#include <omp.h>
+#include <stdlib.h>
 
-const size_t array_alignment = 2*1024*1024;
-
-// Array values
-const double start_a = 0.1;
-const double start_b = 0.2;
-const double start_c = 0.3;
-const double start_scalar = 0.4;
+#include "config.h"
 
 size_t array_size = 1<<25;
 size_t num_times = 100;
 size_t device_index = 0;
 bool use_float = false;
-
-// device functions
-void list_devices(void);
-
-// utils
-void sys_fatal(const char *msg);
-
-#define CONCAT(a,b,c) a##b##c
-#define template(a,b) CONCAT(a,_,b)
-
-#ifdef MANUAL_SCHEDULE
-#define DEVICE_MEMORY
-#endif
-#ifdef DEVICE_MEMORY
-	#define T double
-	#include "triad_omp_mem_c.in"
-	#undef T
-	#define T float
-	#include "triad_omp_mem_c.in"
-	#undef T
-#else
-	#define T double
-	#include "triad_omp_c.in"
-	#undef T
-	#define T float
-	#include "triad_omp_c.in"
-	#undef T
-#endif
-
-#undef template
-#undef CONCAT
-
-void
-list_devices()
-{
-	int i = omp_get_initial_device();
-	int n = omp_get_num_devices();
-	int d = omp_get_default_device();
-	printf("initial_device = %d\n", i);
-	printf("num_devices = %d\n", n);
-	printf("default_device = %d\n", d);
-}
 
 int
 parse_int(const char *str, size_t *out)
@@ -94,6 +43,7 @@ parse_args(int argc, char **argv)
 				"	-n  NUM     Run the test NUM times\n"
 				"	-f          Use single precision float (default double)\n",
 				argv[0]);
+			exit(EXIT_SUCCESS);
 		}else{
 			sys_fatal("Unrecognized argument (see '-h')");
 		}
@@ -105,8 +55,7 @@ main(int argc, char **argv)
 {
 	list_devices();
 	parse_args(argc, argv);
-	omp_set_default_device(device_index);
-	printf("Using device %d\n", omp_get_default_device());
+	set_target_device(device_index);
 	if(use_float)
 		run_triad_float(num_times, array_size);
 	else

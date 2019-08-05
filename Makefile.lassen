@@ -1,0 +1,3 @@
+CONFIG := lassen.xlc
+SETUP := true
+CC := xlc -qsmp=omp -qoffload -qarch=pwr9 -qtune=pwr9

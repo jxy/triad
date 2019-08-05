@@ -1,0 +1,3 @@
+CONFIG := lassen.clang-coral-2018
+SETUP := module load clang/coral-2018.08.08
+CC := clang-gpu -march=native -Rpass=loop-vectorize

@@ -22,3 +22,6 @@ triad_omp_mem_c.$(CONFIG): triad_omp_mem_c.in
 
 triad_omp_sched_c.$(CONFIG): triad_omp_mem_c.in
 	@$(RUN) $(CC) $(CFLAGS) -DMANUAL_SCHEDULE -o $@ $(MAIN) $(OMPPROC)
+
+run-%: %
+	@$(RUN) ./$^ $(ARGS)

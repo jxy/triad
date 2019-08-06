@@ -8,6 +8,7 @@ MAIN = main.c
 OMPPROC = omp_proc.c
 
 all: $(ALLBIN)
+run: $(ALLBIN:%=run-%)
 
 CFLAGS = -Wall -Wextra -Ofast -std=c11
 

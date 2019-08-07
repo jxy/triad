@@ -13,9 +13,6 @@ const double start_b = 0.2;
 const double start_c = 0.3;
 const double start_scalar = 0.4;
 
-#define CONCAT(a,b,c) a##b##c
-#define template(a,b) CONCAT(a,_,b)
-
 #ifdef MANUAL_SCHEDULE
 #define DEVICE_MEMORY
 #endif
@@ -34,9 +31,6 @@ const double start_scalar = 0.4;
 	#include "triad_omp_c.in"
 	#undef T
 #endif
-
-#undef template
-#undef CONCAT
 
 void
 list_devices()

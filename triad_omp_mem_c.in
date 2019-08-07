@@ -1,9 +1,9 @@
-typedef struct {T*p[2];} template(Array,T);
+typedef struct {T*p[2];} template(T,Array);
 
-template(Array,T)
-template(new_array,T)(size_t s)
+template(T,Array)
+template(T,new_array)(size_t s)
 {
-	template(Array,T) a;
+	template(T,Array) a;
 	a.p[0] = aligned_alloc(array_alignment, s);
 	if(!a.p[0]) sys_fatal("Failed allocation on host.");
 	a.p[1] = omp_target_alloc(s, omp_get_default_device());
@@ -12,14 +12,14 @@ template(new_array,T)(size_t s)
 }
 
 void
-template(free_array,T)(template(Array,T) a)
+template(T,free_array)(template(T,Array) a)
 {
 	omp_target_free(a.p[1], omp_get_default_device());
 	free(a.p[0]);
 }
 
 void
-template(init_array,T)(size_t s, template(Array,T) a, T init_a)
+template(T,init_array)(size_t s, template(T,Array) a, T init_a)
 {
 	T *aa = a.p[1];
 	#pragma omp target teams distribute parallel for simd is_device_ptr(aa)
@@ -28,14 +28,14 @@ template(init_array,T)(size_t s, template(Array,T) a, T init_a)
 }
 
 void
-template(to_cpu,T)(size_t s, template(Array,T) a)
+template(T,to_cpu)(size_t s, template(T,Array) a)
 {
 	omp_target_memcpy(a.p[0], a.p[1], s, 0, 0,
 		omp_get_initial_device(), omp_get_default_device());
 }
 
 void
-template(triad,T)(size_t s, template(Array,T) a, template(Array,T) b, template(Array,T) c)
+template(T,triad)(size_t s, template(T,Array) a, template(T,Array) b, template(T,Array) c)
 {
 	const T sc = start_scalar;
 	T * restrict aa = a.p[1];
@@ -60,14 +60,14 @@ template(triad,T)(size_t s, template(Array,T) a, template(Array,T) b, template(A
 		}
 	}
 #else
-	#pragma omp target teams distribute parallel for simd is_device_ptr(aa,bb,cc)
+	#pragma omp target teams distribute parallel for simd is_device_ptr(aa,bb,cc) aligned(aa,bb,cc)
 	for(size_t i = 0; i < s; i++)
 		aa[i] = bb[i] + sc * cc[i];
 #endif
 }
 
 void
-template(check_solution,T)(size_t nt, size_t s, template(Array,T) a, template(Array,T) b, template(Array,T) c)
+template(T,check_solution)(size_t nt, size_t s, template(T,Array) a, template(T,Array) b, template(T,Array) c)
 {
 	T ta = start_a;
 	T tb = start_b;
@@ -97,7 +97,7 @@ template(check_solution,T)(size_t nt, size_t s, template(Array,T) a, template(Ar
 }
 
 void
-template(run_triad,T)(size_t nt, size_t s)
+template(T,run_triad)(size_t nt, size_t s)
 {
 	size_t size = s*sizeof(T);
 
@@ -107,31 +107,31 @@ template(run_triad,T)(size_t nt, size_t s)
 	printf("Size: %.0f KB\n", size*1E-3);
 	printf("Footprint: %.0f KB\n", 3*size*1E-3);
 
-	template(Array,T) a = template(new_array,T)(size);
-	template(Array,T) b = template(new_array,T)(size);
-	template(Array,T) c = template(new_array,T)(size);
+	template(T,Array) a = template(T,new_array)(size);
+	template(T,Array) b = template(T,new_array)(size);
+	template(T,Array) c = template(T,new_array)(size);
 
-	template(init_array,T)(s, a, start_a);
-	template(init_array,T)(s, b, start_b);
-	template(init_array,T)(s, c, start_c);
+	template(T,init_array)(s, a, start_a);
+	template(T,init_array)(s, b, start_b);
+	template(T,init_array)(s, c, start_c);
 
 	const double prec = omp_get_wtick();
 	printf("wtick: %.g sec\n", prec);
 	double t = -omp_get_wtime();
 
 	for(size_t i = 0; i < nt; i++)
-		template(triad,T)(s, a, b, c);
+		template(T,triad)(s, a, b, c);
 
 	t += omp_get_wtime();
 
-	template(to_cpu,T)(size, a);
-	template(to_cpu,T)(size, b);
-	template(to_cpu,T)(size, c);
-	template(check_solution,T)(nt, s, a, b, c);
+	template(T,to_cpu)(size, a);
+	template(T,to_cpu)(size, b);
+	template(T,to_cpu)(size, c);
+	template(T,check_solution)(nt, s, a, b, c);
 
-	template(free_array,T)(a);
-	template(free_array,T)(b);
-	template(free_array,T)(c);
+	template(T,free_array)(a);
+	template(T,free_array)(b);
+	template(T,free_array)(c);
 
 	printf("Runtime: %.9f sec\n", t);
 	printf("Bandwidth: %.3f GB/s\n", 3*size*nt*1E-9 / t);

@@ -57,9 +57,9 @@ main(int argc, char **argv)
 	parse_args(argc, argv);
 	set_target_device(device_index);
 	if(use_float)
-		run_triad_float(num_times, array_size);
+		template(float,run_triad)(num_times, array_size);
 	else
-		run_triad_double(num_times, array_size);
+		template(double,run_triad)(num_times, array_size);
 }
 
 void

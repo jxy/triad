@@ -10,7 +10,7 @@ OMPPROC := omp_proc.c
 all: $(ALLBIN)
 run: $(ALLBIN:b/%=run-%)
 
-CFLAGS += -Wall -Wextra -Ofast -std=c11
+CFLAGS += -Wall -Wextra -Ofast -std=gnu11
 
 $(ALLBIN): $(MAIN)
 $(OMPBIN): $(OMPPROC)

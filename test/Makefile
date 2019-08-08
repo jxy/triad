@@ -1,7 +1,7 @@
 rootdir := ..
 include $(rootdir)/util.mk
 
-CFLAGS += -Wall -Wextra -Ofast -std=c11
+CFLAGS += -Wall -Wextra -Ofast -std=gnu11
 
 CFILES := $(wildcard t*.c)
 BIN := $(CFILES:%.c=b/%.$(CONFIG))

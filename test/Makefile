@@ -1,10 +1,10 @@
 rootdir := ..
 include $(rootdir)/util.mk
 
-CFLAGS := -Wall -Wextra -Ofast -std=c11
+CFLAGS += -Wall -Wextra -Ofast -std=c11
 
-CFILES = $(wildcard t*.c)
-BIN = $(CFILES:%.c=%.$(CONFIG))
+CFILES := $(wildcard t*.c)
+BIN := $(CFILES:%.c=%.$(CONFIG))
 
 all: $(BIN)
 run: $(BIN:%=run-%)

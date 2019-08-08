@@ -1,16 +1,16 @@
 rootdir := .
 include $(rootdir)/util.mk
 
-BIN = triad_omp_c triad_omp_mem_c triad_omp_sched_c
-OMPBIN = $(BIN:%=%.$(CONFIG))
-ALLBIN = $(OMPBIN)
-MAIN = main.c
-OMPPROC = omp_proc.c
+BIN := triad_omp_c triad_omp_mem_c triad_omp_sched_c
+OMPBIN := $(BIN:%=%.$(CONFIG))
+ALLBIN := $(OMPBIN)
+MAIN := main.c
+OMPPROC := omp_proc.c
 
 all: $(ALLBIN)
 run: $(ALLBIN:%=run-%)
 
-CFLAGS = -Wall -Wextra -Ofast -std=c11
+CFLAGS += -Wall -Wextra -Ofast -std=c11
 
 $(ALLBIN): $(MAIN)
 $(OMPBIN): $(OMPPROC)

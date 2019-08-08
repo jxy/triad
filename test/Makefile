@@ -7,9 +7,9 @@ CFILES := $(wildcard t*.c)
 BIN := $(CFILES:%.c=b/%.$(CONFIG))
 
 all: $(BIN)
-run: $(BIN:%=run-%)
+run: $(BIN:b/%=run-%)
 
-t%.$(CONFIG): t%.c
+b/t%.$(CONFIG): t%.c
 	@$(RUN) $(CC) $(CFLAGS) -o $@ $^
 run-%: b/%
 	@$(RUN) ./$^

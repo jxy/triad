@@ -9,7 +9,7 @@ main(int argc, char **argv)
 {
 	const int64_t narr = 1 << 10;
 	tinfo tinit = {-1, -1, -1, -1};
-	tinfo *t = malloc(sizeof(tinfo)*narr);
+	tinfo *t = (tinfo *)malloc(sizeof(tinfo)*narr);
 	for(int64_t i = 0; i < narr; ++i) t[i] = tinit;
 	#pragma omp target teams distribute parallel for simd map(t[0:narr])
 	for(int64_t i = 0; i < narr; ++i){

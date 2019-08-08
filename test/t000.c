@@ -7,7 +7,7 @@ typedef struct {int64_t nteam; int64_t nthread;} tinfo;
 int
 main(int argc, char **argv)
 {
-	tinfo *t = malloc(sizeof(tinfo));
+	tinfo *t = (tinfo *)malloc(sizeof(tinfo));
 	t->nteam = -1;
 	t->nthread = -1;
 	#pragma omp target teams map(t[0:1])

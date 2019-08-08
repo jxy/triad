@@ -10,14 +10,14 @@ main(int argc, char **argv)
 	const int h = omp_get_initial_device();
 	const int d = omp_get_default_device();
 	const size_t s = sizeof(tinfo);
-	tinfo *t = malloc(s);
+	tinfo *t = (tinfo *)malloc(s);
 	if(!t){
 		perror("malloc error");
 		exit(1);
 	}
 	t->nteam = -1;
 	t->mthread = -1;
-	tinfo *p = omp_target_alloc(s, d);
+	tinfo *p = (tinfo *)omp_target_alloc(s, d);
 	if(!p){
 		perror("omp_target_alloc error");
 		exit(1);

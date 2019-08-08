@@ -1,4 +1,3 @@
-triad_omp_c
-triad_omp_mem_c
-triad_omp_sched_c
-*.clang
+b/
+o/
+s/

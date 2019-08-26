@@ -25,9 +25,10 @@ main(int argc, char **argv)
 	omp_target_memcpy(p, t, s, 0, 0, d, h);
 	#pragma omp target teams is_device_ptr(p)
 	{
-		if(omp_get_team_num() == 0)
+		if(omp_get_team_num() == 0){
 			p->nteam = omp_get_num_teams();
 			p->mthread = omp_get_max_threads();
+		}
 	}
 	omp_target_memcpy(t, p, s, 0, 0, h, d);
 	printf("nteam: %ld  mthread: %ld\n", t->nteam, t->mthread);
